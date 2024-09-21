@@ -19,8 +19,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-df = pd.read_csv("C:\\Users\\User\\Downloads\\Education.csv")
+path = "https://linked.aub.edu.lb/pkgcube/data/2593b20dc9336f21b13c2728bc3927db_20240905_183330.csv"
+df = pd.read_csv(path)
 # delete reference columns
 df.drop(["Observation URI","references","publisher","dataset"], axis = 1, inplace = True)
 df["PercentageofEducationlevelofresidents-illeterate"]= df["PercentageofEducationlevelofresidents-illeterate"]/100
