@@ -109,19 +109,38 @@ col = st.columns((2, 1, 4, 2.5), gap="medium")
 
 # Column 0 – Text and Pie
 with col[0]:
-    st.markdown("<h4 style='text-align: left; color: grey;'>Average Across Lebanon of Last Education Level Secured for</h4>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: left;'>{selected_edu}</p>", unsafe_allow_html=True)
-    st.markdown(f"<h4 style='text-align: left; color: red;'>{round(df[selected_edu].mean()*100, 2)}%</h4>", unsafe_allow_html=True)
+    # Section: Average across Lebanon
+    st.markdown("<h5 style='text-align: left;'>Average Across Lebanon of Last Education Level Secured for</h5>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: left; font-size:14px;'>{selected_edu}</p>", unsafe_allow_html=True)
+    st.markdown(f"<h5 style='text-align: left; color: red;'>{round(df[selected_edu].mean()*100, 2)}%</h5>", unsafe_allow_html=True)
 
-    st.markdown("<h4 style='text-align: left; color: grey;'>Proportion Population that Completed</h4>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: left;'>{selected_edu}</p>", unsafe_allow_html=True)
+    # Add spacing to push pie chart lower
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+    # Section: Proportion Completed
+    st.markdown("<h5 style='text-align: left;'>Proportion Population that Completed</h5>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: left; font-size:14px;'>{selected_edu}</p>", unsafe_allow_html=True)
     cum_val = round(get_cum(selected_edu)*100, 2)
-    st.markdown(f"<p style='text-align: left;'>{cum_val}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: left; font-size:14px;'>{cum_val}</p>", unsafe_allow_html=True)
 
+    # Pie chart
     values = [get_cum(selected_edu), 1 - get_cum(selected_edu)]
     labels = [selected_edu, "Other"]
-    fig = px.pie(values=values, names=None, hole=0.5, color=labels, color_discrete_sequence=["#FF0000", "#D3D3D3"])
-    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0), width=800, height=200, autosize=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    fig = px.pie(
+        values=values,
+        names=None,
+        hole=0.5,
+        color=labels,
+        color_discrete_sequence=["#FF0000", "#D3D3D3"]
+    )
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        width=800,
+        height=200,
+        autosize=False,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
     st.plotly_chart(fig)
 
 # Column 3 – Ranking Table
@@ -141,21 +160,27 @@ with col[3]:
         """)
 
 with col[2]:
+    # Map title aligned to the left
+    st.markdown("<h5 style='text-align: left;'>Map of Education Level by Governorate</h5>", unsafe_allow_html=True)
+
+    # Build and clean average_education
     average_education = pd.DataFrame({
-    "Latitude": [34.545895, 34.208272, 33.8333, 33.8333, 33.3667, 34.4639449, 33.2721],
-    "Longitude": [36.16667, 36.2625889, 35.9000, 35.5333, 35.4667, 35.9466045, 35.2033],
-    "Elementary Education (%)": gover_df.groupby("refArea")["Elementary Education (%)"].mean(),
-    "Intermediate Education (%)": gover_df.groupby("refArea")["Intermediate Education (%)"].mean(),
-    "Secondary Education (%)": gover_df.groupby("refArea")["Secondary Education (%)"].mean(),
-    "Higher Education (%)": gover_df.groupby("refArea")["Higher Education (%)"].mean(),
-    "University Education (%)": gover_df.groupby("refArea")["University Education (%)"].mean()
+        "Latitude": [34.545895, 34.208272, 33.8333, 33.8333, 33.3667, 34.4639449, 33.2721],
+        "Longitude": [36.16667, 36.2625889, 35.9000, 35.5333, 35.4667, 35.9466045, 35.2033],
+        "Elementary Education (%)": gover_df.groupby("refArea")["Elementary Education (%)"].mean(),
+        "Intermediate Education (%)": gover_df.groupby("refArea")["Intermediate Education (%)"].mean(),
+        "Secondary Education (%)": gover_df.groupby("refArea")["Secondary Education (%)"].mean(),
+        "Higher Education (%)": gover_df.groupby("refArea")["Higher Education (%)"].mean(),
+        "University Education (%)": gover_df.groupby("refArea")["University Education (%)"].mean()
     })
+
     average_education = average_education[
-    average_education["Latitude"].notna() &
-    average_education["Longitude"].notna() &
-    (average_education["Latitude"] != 0) &
-    (average_education["Longitude"] != 0)
+        average_education["Latitude"].notna() &
+        average_education["Longitude"].notna() &
+        (average_education["Latitude"] != 0) &
+        (average_education["Longitude"] != 0)
     ]
+
     # Map visualization
     map = px.scatter_mapbox(
         average_education,
@@ -168,16 +193,16 @@ with col[2]:
     )
     map.update_layout(
         mapbox_style='open-street-map',
-        title='Last Level secured (in % Governorate Population)',
+        title=None,
         width=500,
-        height=500,
+        height=300,  # reduce height to balance column length
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)'
     )
-    map.update_traces(marker=dict(size=40, opacity=0.7))
+    map.update_traces(marker=dict(size=30, opacity=0.7))
     st.plotly_chart(map, use_container_width=True)
 
-    # Compute averages
+    # Compute and plot bar chart
     gover_names = sorted(gover_df["refArea"].unique())
     average_university = df["University Education (%)"].mean()
     average_higher = df["Higher Education (%)"].mean()
@@ -185,29 +210,14 @@ with col[2]:
     average_intermediate = df["Intermediate Education (%)"].mean()
     average_elementary = df["Elementary Education (%)"].mean()
 
-    leb_data = {
-        "Education": ["Elementary", "Intermediate", "Secondary", "Higher", "University"],
-        "percentage": [
-            average_elementary,
-            average_intermediate,
-            average_secondary,
-            average_higher,
-            average_university
-        ]
-    }
-
-    # Group governorate-level data
     average_elementaryedu = gover_df.groupby("refArea")["Elementary Education (%)"].mean()
     average_intermediateedu = gover_df.groupby("refArea")["Intermediate Education (%)"].mean()
     average_secondaryedu = gover_df.groupby("refArea")["Secondary Education (%)"].mean()
     average_higheredu = gover_df.groupby("refArea")["Higher Education (%)"].mean()
     average_universityedu = gover_df.groupby("refArea")["University Education (%)"].mean()
 
-    # Governorate selection
     selected_gov = st.selectbox("Select a Governorate", gover_names)
 
-    # Histogram comparison
-    import plotly.graph_objects as go
     histogram = go.Figure(data=[
         go.Bar(name="Elementary Education (%)", x=(selected_gov, "Lebanon"), y=(average_elementaryedu[selected_gov], average_elementary)),
         go.Bar(name="Intermediate Education (%)", x=(selected_gov, "Lebanon"), y=(average_intermediateedu[selected_gov], average_intermediate)),
