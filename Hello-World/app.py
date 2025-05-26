@@ -126,6 +126,7 @@ with col[3]:
         """)
 
 with col[2]:
+    gover_df = gover_df[gover_df["refArea"].str.endswith("_Governorate")]
     # Governorate coordinates matched by refArea
     coords = {
         "Baalbek_El_Hermel_Governorate": (34.545895, 36.16667),
