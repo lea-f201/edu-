@@ -142,6 +142,7 @@ with col[2]:
         lon="Longitude",
         color=selected_edu,
         zoom=7,
+        center={"lat": 33.8547, "lon": 35.8623},
         color_continuous_scale='reds'
     )
     map.update_layout(
