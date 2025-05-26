@@ -126,20 +126,20 @@ with col[3]:
         """)
 
 with col[2]:
+    # ✅ Only include the 8 governorates
     valid_governorates = [
-    "Beirut_Governorate",
-    "Mount_Lebanon_Governorate",
-    "North_Governorate",
-    "Akkar_Governorate",
-    "Bekaa_Governorate",
-    "Baalbek_El_Hermel_Governorate",
-    "South_Governorate",
-    "Nabatieh_Governorate"
+        "Beirut_Governorate",
+        "Mount_Lebanon_Governorate",
+        "North_Governorate",
+        "Akkar_Governorate",
+        "Bekaa_Governorate",
+        "Baalbek_El_Hermel_Governorate",
+        "South_Governorate",
+        "Nabatieh_Governorate"
     ]
-
-    # Filter for valid governorates only
     gover_df = gover_df[gover_df["refArea"].isin(valid_governorates)]
-    # Governorate coordinates matched by refArea
+
+    # ✅ Governorate coordinates matched by refArea
     coords = {
         "Baalbek_El_Hermel_Governorate": (34.545895, 36.16667),
         "Akkar_Governorate": (34.208272, 36.2625889),
@@ -151,15 +151,12 @@ with col[2]:
         "Nabatieh_Governorate": (33.3777, 35.4839)
     }
 
-    # Grouped data by refArea
+    # ✅ Group and assign coordinates
     average_education = gover_df.groupby("refArea")[[selected_edu]].mean().reset_index()
-    average_education["Latitude"] = average_education["refArea"].map(lambda x: coords.get(x, (None, None))[0])
-    average_education["Longitude"] = average_education["refArea"].map(lambda x: coords.get(x, (None, None))[1])
-    average_education = average_education.dropna(subset=["Latitude", "Longitude"])
-    # Keep only governorates (entries ending with "_Governorate")
-    average_education = average_education[average_education["refArea"].str.endswith("_Governorate")]
+    average_education["Latitude"] = average_education["refArea"].map(lambda x: coords[x][0])
+    average_education["Longitude"] = average_education["refArea"].map(lambda x: coords[x][1])
 
-    # Plot map
+    # ✅ Plot map
     map = px.scatter_mapbox(
         average_education,
         lat="Latitude",
@@ -181,7 +178,7 @@ with col[2]:
     map.update_traces(marker=dict(size=40, opacity=0.7))
     st.plotly_chart(map, use_container_width=True)
 
-    # Bar chart logic
+    # ✅ Prepare bar chart values
     gover_names = sorted(gover_df["refArea"].unique())
     average_university = df["University Education (%)"].mean()
     average_higher = df["Higher Education (%)"].mean()
@@ -197,6 +194,7 @@ with col[2]:
 
     selected_gov = st.selectbox("Select a Governorate", gover_names)
 
+    # ✅ Bar chart
     histogram = go.Figure(data=[
         go.Bar(name="Elementary Education (%)", x=(selected_gov, "Lebanon"), y=(average_elementaryedu[selected_gov], average_elementary)),
         go.Bar(name="Intermediate Education (%)", x=(selected_gov, "Lebanon"), y=(average_intermediateedu[selected_gov], average_intermediate)),
