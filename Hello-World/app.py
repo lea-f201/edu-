@@ -181,7 +181,8 @@ with col[2]:
         (average_education["Latitude"] != 0) &
         (average_education["Longitude"] != 0)
     ]
-
+    
+    st.markdown("<h5 style='text-align: left;'>Heatmap of Last Education Level Secured by Governorate</h5>", unsafe_allow_html=True)
     # Map visualization
     map = px.scatter_mapbox(
         average_education,
@@ -196,7 +197,7 @@ with col[2]:
         mapbox_style='open-street-map',
         title=None,
         width=500,
-        height=300,  # reduce height to balance column length
+        height=200,  # reduce height to balance column length
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)'
     )
