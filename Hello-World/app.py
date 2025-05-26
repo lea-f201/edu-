@@ -126,37 +126,73 @@ with col[3]:
         """)
 
 with col[2]:
-    map = px.scatter_mapbox(average_education, lat="Latitude", lon="Longitude", color= selected_edu, zoom=7, color_continuous_scale='reds')
-    map.update_layout(mapbox_style='open-street-map', title='Last Level secured (in % Governorate Population)', width=500, height=500, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    # Governorate coordinates matched by refArea
+    coords = {
+        "Baalbek_El_Hermel_Governorate": (34.545895, 36.16667),
+        "Akkar_Governorate": (34.208272, 36.2625889),
+        "North_Governorate": (34.4362, 35.8497),
+        "Mount_Lebanon_Governorate": (33.8333, 35.5333),
+        "Beirut_Governorate": (33.8886, 35.4955),
+        "Bekaa_Governorate": (33.8463, 35.9020),
+        "South_Governorate": (33.2721, 35.2033),
+        "Nabatieh_Governorate": (33.3777, 35.4839)
+    }
+
+    # Grouped data by refArea
+    average_education = gover_df.groupby("refArea")[[selected_edu]].mean().reset_index()
+    average_education["Latitude"] = average_education["refArea"].map(lambda x: coords.get(x, (None, None))[0])
+    average_education["Longitude"] = average_education["refArea"].map(lambda x: coords.get(x, (None, None))[1])
+    average_education = average_education.dropna(subset=["Latitude", "Longitude"])
+
+    # Plot map
+    map = px.scatter_mapbox(
+        average_education,
+        lat="Latitude",
+        lon="Longitude",
+        color=selected_edu,
+        zoom=7,
+        size=selected_edu,
+        hover_name="refArea",
+        color_continuous_scale="reds"
+    )
+    map.update_layout(
+        mapbox_style="open-street-map",
+        title="Last Level secured (in % Governorate Population)",
+        width=500,
+        height=500,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
     map.update_traces(marker=dict(size=40, opacity=0.7))
     st.plotly_chart(map, use_container_width=True)
-    
+
+    # Bar chart logic
     gover_names = sorted(gover_df["refArea"].unique())
     average_university = df["University Education (%)"].mean()
-    average_higher = df["Higher Education (%)"].mean() 
-    average_secondary = df["Secondary Education (%)"].mean() 
-    average_intermediate = df["Intermediate Education (%)"].mean() 
-    average_elementary = df["Elementary Education (%)"].mean() 
-
-    leb_data = {"Education" : ["Elementary" , "Intermediate", "Secondary", "Higher", "University"],
-                "percentage" : [average_elementary, average_intermediate, average_secondary, average_higher, average_university]}
+    average_higher = df["Higher Education (%)"].mean()
+    average_secondary = df["Secondary Education (%)"].mean()
+    average_intermediate = df["Intermediate Education (%)"].mean()
+    average_elementary = df["Elementary Education (%)"].mean()
 
     average_elementaryedu = gover_df.groupby("refArea")["Elementary Education (%)"].mean()
     average_intermediateedu = gover_df.groupby("refArea")["Intermediate Education (%)"].mean()
     average_secondaryedu = gover_df.groupby("refArea")["Secondary Education (%)"].mean()
     average_higheredu = gover_df.groupby("refArea")["Higher Education (%)"].mean()
     average_universityedu = gover_df.groupby("refArea")["University Education (%)"].mean()
-    
+
     selected_gov = st.selectbox("Select a Governorate", gover_names)
 
-    import plotly.graph_objects as go
     histogram = go.Figure(data=[
-        go.Bar(name="Elementary Education (%)", x=(selected_gov,"Lebanon"), y=(average_elementaryedu[selected_gov], average_elementary)),
-        go.Bar(name="Intermediate Education (%)", x=(selected_gov,"Lebanon"), y=(average_intermediateedu[selected_gov], average_intermediate)),
-        go.Bar(name="Secondary Education (%)", x=(selected_gov,"Lebanon"), y=(average_secondaryedu[selected_gov], average_secondary)),
-        go.Bar(name="Higher Education (%)", x=(selected_gov,"Lebanon"), y=(average_higheredu[selected_gov], average_higher)),
-        go.Bar(name="University Education (%)", x=(selected_gov,"Lebanon"), y=(average_universityedu[selected_gov], average_university))
+        go.Bar(name="Elementary Education (%)", x=(selected_gov, "Lebanon"), y=(average_elementaryedu[selected_gov], average_elementary)),
+        go.Bar(name="Intermediate Education (%)", x=(selected_gov, "Lebanon"), y=(average_intermediateedu[selected_gov], average_intermediate)),
+        go.Bar(name="Secondary Education (%)", x=(selected_gov, "Lebanon"), y=(average_secondaryedu[selected_gov], average_secondary)),
+        go.Bar(name="Higher Education (%)", x=(selected_gov, "Lebanon"), y=(average_higheredu[selected_gov], average_higher)),
+        go.Bar(name="University Education (%)", x=(selected_gov, "Lebanon"), y=(average_universityedu[selected_gov], average_university))
     ])
-    histogram.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', barmode='group', title="Average Level of Maximum Education for each Governorate (in %)")
+    histogram.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        barmode='group',
+        title="Average Level of Maximum Education for each Governorate (in %)"
+    )
     st.plotly_chart(histogram, use_container_width=True)
-
