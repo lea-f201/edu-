@@ -143,7 +143,9 @@ with col[2]:
     average_education["Latitude"] = average_education["refArea"].map(lambda x: coords.get(x, (None, None))[0])
     average_education["Longitude"] = average_education["refArea"].map(lambda x: coords.get(x, (None, None))[1])
     average_education = average_education.dropna(subset=["Latitude", "Longitude"])
-    average_education = average_education[average_education["refArea"] != "Hasbaya District"]
+    # Keep only governorates (entries ending with "_Governorate")
+    average_education = average_education[average_education["refArea"].str.endswith("_Governorate")]
+
     # Plot map
     map = px.scatter_mapbox(
         average_education,
