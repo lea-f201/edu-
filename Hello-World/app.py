@@ -135,6 +135,12 @@ with col[2]:
     "Higher Education (%)": gover_df.groupby("refArea")["Higher Education (%)"].mean(),
     "University Education (%)": gover_df.groupby("refArea")["University Education (%)"].mean()
     })
+    average_education = average_education[
+    average_education["Latitude"].notna() &
+    average_education["Longitude"].notna() &
+    (average_education["Latitude"] != 0) &
+    (average_education["Longitude"] != 0)
+    ]
     # Map visualization
     map = px.scatter_mapbox(
         average_education,
