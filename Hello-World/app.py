@@ -109,27 +109,28 @@ col = st.columns((2, 1, 4, 2.5), gap="medium")
 
 # Column 0 – Text and Pie
 with col[0]:
-    # Section: Average across Lebanon
-    st.markdown("<h5 style='text-align: left;'>Average Across Lebanon of Last Education Level Secured for</h5>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: left; font-size:14px;'>{selected_edu}</p>", unsafe_allow_html=True)
-    st.markdown(f"<h5 style='text-align: left; color: red;'>{round(df[selected_edu].mean()*100, 2)}%</h5>", unsafe_allow_html=True)
+    st.markdown("<h5 style='text-align: center; color: grey;'>Average Across Lebanon of Last Education Level Secured for</h5>", unsafe_allow_html=True)
+    average_edu = str(round(df[selected_edu].mean()*100,2)) + "%"
+    text = selected_edu
+    st.markdown(f"<p style='text-align: center; font-size:14px;'>{text}</p>", unsafe_allow_html=True)
+    Text = average_edu
+    st.markdown(f"<h5 style='text-align: center; color: red;'>{Text}</h5>", unsafe_allow_html=True)
 
-    # Add spacing to push pie chart lower
+    # Added spacing between the two sections to increase column height
     st.markdown("<br><br><br>", unsafe_allow_html=True)
 
-    # Section: Proportion Completed
-    st.markdown("<h5 style='text-align: left;'>Proportion Population that Completed</h5>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: left; font-size:14px;'>{selected_edu}</p>", unsafe_allow_html=True)
-    cum_val = round(get_cum(selected_edu)*100, 2)
-    st.markdown(f"<p style='text-align: left; font-size:14px;'>{cum_val}</p>", unsafe_allow_html=True)
+    st.markdown("<h5 style='text-align: center; color: grey;'>Proportion Population that Completed</h5>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: center; font-size:14px;'>{text}</p>", unsafe_allow_html=True)
+    text1 = round(get_cum(selected_edu)*100, 2)
+    st.markdown(f"<p style='text-align: center; font-size:14px;'>{text1}</p>", unsafe_allow_html=True)
 
-    # Pie chart
     values = [get_cum(selected_edu), 1 - get_cum(selected_edu)]
     labels = [selected_edu, "Other"]
     fig = px.pie(
         values=values,
         names=None,
         hole=0.5,
+        title=None,
         color=labels,
         color_discrete_sequence=["#FF0000", "#D3D3D3"]
     )
