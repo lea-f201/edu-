@@ -126,6 +126,15 @@ with col[3]:
         """)
 
 with col[2]:
+    average_education = pd.DataFrame({
+    "Latitude": [34.545895, 34.208272, 33.8333, 33.8333, 33.3667, 34.4639449, 33.2721],
+    "Longitude": [36.16667, 36.2625889, 35.9000, 35.5333, 35.4667, 35.9466045, 35.2033],
+    "Elementary Education (%)": gover_df.groupby("refArea")["Elementary Education (%)"].mean(),
+    "Intermediate Education (%)": gover_df.groupby("refArea")["Intermediate Education (%)"].mean(),
+    "Secondary Education (%)": gover_df.groupby("refArea")["Secondary Education (%)"].mean(),
+    "Higher Education (%)": gover_df.groupby("refArea")["Higher Education (%)"].mean(),
+    "University Education (%)": gover_df.groupby("refArea")["University Education (%)"].mean()
+    })
     # Map visualization
     map = px.scatter_mapbox(
         average_education,
