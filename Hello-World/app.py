@@ -126,7 +126,19 @@ with col[3]:
         """)
 
 with col[2]:
-    gover_df = gover_df[gover_df["refArea"].str.endswith("_Governorate")]
+    valid_governorates = [
+    "Beirut_Governorate",
+    "Mount_Lebanon_Governorate",
+    "North_Governorate",
+    "Akkar_Governorate",
+    "Bekaa_Governorate",
+    "Baalbek_El_Hermel_Governorate",
+    "South_Governorate",
+    "Nabatieh_Governorate"
+    ]
+
+    # Filter for valid governorates only
+    gover_df = gover_df[gover_df["refArea"].isin(valid_governorates)]
     # Governorate coordinates matched by refArea
     coords = {
         "Baalbek_El_Hermel_Governorate": (34.545895, 36.16667),
