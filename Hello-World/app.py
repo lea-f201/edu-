@@ -44,6 +44,11 @@ df = df.rename(columns={
 })
 df.dropna(inplace=True)
 
+df["refArea"] = df["refArea"].str.split("/", n=4).str[4]
+df["governorate"] = df["refArea"].str[-1] == "e"
+governorate = df["governorate"] == True
+gover_df = df[governorate]
+
 # Sidebar content
 with st.sidebar:
     st.title("Level of Education")
