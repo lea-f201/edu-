@@ -44,10 +44,20 @@ df = df.rename(columns={
 })
 df.dropna(inplace=True)
 
+valid_governorates = [
+    "Beirut_Governorate",
+    "Mount_Lebanon_Governorate",
+    "North_Governorate",
+    "Akkar_Governorate",
+    "Bekaa_Governorate",
+    "Baalbek_El_Hermel_Governorate",
+    "South_Governorate",
+    "Nabatieh_Governorate"
+]
+
+# Fix the refArea field format
 df["refArea"] = df["refArea"].str.split("/", n=4).str[4]
-df["governorate"] = df["refArea"].str[-1] == "e"
-governorate = df["governorate"] == True
-gover_df = df[governorate]
+gover_df = df[df["refArea"].isin(valid_governorates)]
 
 # Sidebar content
 with st.sidebar:
