@@ -166,11 +166,16 @@ with col[2]:
 
     selected_gov = st.selectbox("Select a Governorate", gover_names)
     histogram = go.Figure(data=[
-        go.Bar(name="Elementary Education (%)", x=(selected_gov,"Lebanon"), y=(average_elementaryedu[selected_gov], average_elementary)),
-        go.Bar(name="Intermediate Education (%)", x=(selected_gov,"Lebanon"), y=(average_intermediateedu[selected_gov], average_intermediate)),
-        go.Bar(name="Secondary Education (%)", x=(selected_gov,"Lebanon"), y=(average_secondaryedu[selected_gov], average_secondary)),
-        go.Bar(name="Higher Education (%)", x=(selected_gov,"Lebanon"), y=(average_higheredu[selected_gov], average_higher)),
-        go.Bar(name="University Education (%)", x=(selected_gov,"Lebanon"), y=(average_universityedu[selected_gov], average_university))
+    go.Bar(name="Elementary Education (%)", x=(selected_gov, "Lebanon"), y=(
+        average_elementaryedu.loc[selected_gov], average_elementary)),
+    go.Bar(name="Intermediate Education (%)", x=(selected_gov, "Lebanon"), y=(
+        average_intermediateedu.loc[selected_gov], average_intermediate)),
+    go.Bar(name="Secondary Education (%)", x=(selected_gov, "Lebanon"), y=(
+        average_secondaryedu.loc[selected_gov], average_secondary)),
+    go.Bar(name="Higher Education (%)", x=(selected_gov, "Lebanon"), y=(
+        average_higheredu.loc[selected_gov], average_higher)),
+    go.Bar(name="University Education (%)", x=(selected_gov, "Lebanon"), y=(
+        average_universityedu.loc[selected_gov], average_university))
     ])
     histogram.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', barmode='group', title="Average Level of Maximum Education for each Governorate (in %)")
     st.plotly_chart(histogram, use_container_width=True)
